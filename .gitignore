@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Cluster-local artifacts, generated at runtime and specific to one machine
+cluster.json
+*.log
+
+# Python
+__pycache__/
+*.pyc
