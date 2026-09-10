@@ -112,6 +112,33 @@ Once Tailscale is on every node you can drop the `.local` suffix from the
 `--hosts` you pass to the operating scripts, which is why their defaults are
 bare `ai-1,ai-2,ai-3`.
 
+## 5b. Grant three scoped sudo rules
+
+Three scripts need root on the nodes for one command each, non-interactively
+— over SSH there is nowhere for a password prompt to appear. On each node:
+
+```zsh
+sudo visudo -f /etc/sudoers.d/mlx-cluster
+```
+
+Add, substituting your username:
+
+```
+your-username ALL=(ALL) NOPASSWD: /sbin/ifconfig, /sbin/route
+your-username ALL=(ALL) NOPASSWD: /sbin/reboot
+your-username ALL=(ALL) NOPASSWD: /usr/bin/powermetrics
+```
+
+`ifconfig`/`route` are for the ring configuration in the next step, `reboot`
+for automated hang recovery, `powermetrics` for the GPU and thermal columns
+in `monitor_nodes.zsh`. Confirm with `sudo -l`.
+
+**Grant these individually rather than blanket NOPASSWD.** These nodes run a
+network-listening inference server, and an unscoped rule makes any
+compromise of that account an immediate root compromise. Use `visudo`, not
+an editor — it validates before saving, and a malformed sudoers file locks
+you out of sudo completely.
+
 ## 6. Cable and configure the Thunderbolt ring
 
 Cable a **physical ring**: `ai-1 → ai-2 → ai-3 → ai-1`. Then, from the

@@ -86,6 +86,44 @@ the cluster nodes' own home directories, pulled back here so they're not
 only preserved on the nodes themselves. See `node-scripts/README.md` for
 what each one does and its status (still useful vs. superseded/stale).
 
+## Passwordless sudo
+
+Four of these scripts need root on the nodes for one specific command each,
+non-interactively — over SSH there is nowhere for a password prompt to go.
+Every one uses `sudo -n`, which fails instantly rather than hanging on a
+prompt, so a missing rule is a clean failure and never a wedged script.
+
+**Grant them individually. Do not give the account blanket NOPASSWD.** These
+machines run a network-listening inference server; an unscoped rule turns
+any compromise of that account into instant root. Scoped rules cost one
+extra line each.
+
+On each node, `sudo visudo -f /etc/sudoers.d/mlx-cluster`, and add only the
+lines whose scripts you intend to use:
+
+```
+your-username ALL=(ALL) NOPASSWD: /sbin/ifconfig, /sbin/route
+your-username ALL=(ALL) NOPASSWD: /sbin/reboot
+your-username ALL=(ALL) NOPASSWD: /usr/bin/powermetrics
+```
+
+| Rule | Needed by | Without it |
+|---|---|---|
+| `/sbin/ifconfig`, `/sbin/route` | `reconfigure_thunderbolt_ring.zsh` | Cannot apply the ring configuration; you must run the printed commands by hand on every node after every reboot |
+| `/sbin/reboot` | `reboot_cluster.zsh`, and `test_all_models.zsh`'s hang recovery | Reboot each node yourself; the automated recovery cannot run |
+| `/usr/bin/powermetrics` | `monitor_nodes.zsh` | GPU and THERMAL columns read `no-sudo`; everything else still works |
+
+Use `visudo` rather than an editor: it validates syntax before saving, and a
+malformed sudoers file locks you out of sudo entirely. Check afterwards with
+`sudo -l`, which lists what the account may run.
+
+Note that `mlx.distributed_config --auto-setup` probes for sudo generically
+and does not recognise command-specific rules, so it will report that it
+cannot configure anything even when `/sbin/ifconfig` and `/sbin/route` are
+correctly granted. `reconfigure_thunderbolt_ring.zsh` exists to work around
+exactly that: it extracts the commands `--auto-setup` prints and reissues
+them by absolute path, which does match the allowlist.
+
 ## Two topologies, and they are not the same shape
 
 Worth getting straight early, because the words collide:

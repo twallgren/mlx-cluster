@@ -35,8 +35,8 @@ reconfigure_thunderbolt_ring.zsh because a reboot renumbers the Thunderbolt
 interfaces. Exits non-zero if a node does not come back in time or the ring
 fails to verify.
 
-Requires passwordless sudo for /sbin/reboot on each node, which
-configure_node.zsh sets up.
+Requires a passwordless sudo rule for /sbin/reboot on each node. Nothing
+here creates it — see "Passwordless sudo" in README.md.
 
 Options:
   -H, --hosts LIST                    Comma-separated hostnames (default: ai-1,ai-2,ai-3)
