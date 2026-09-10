@@ -86,6 +86,27 @@ the cluster nodes' own home directories, pulled back here so they're not
 only preserved on the nodes themselves. See `node-scripts/README.md` for
 what each one does and its status (still useful vs. superseded/stale).
 
+## Two topologies, and they are not the same shape
+
+Worth getting straight early, because the words collide:
+
+| | SSH control plane | MLX data plane |
+|---|---|---|
+| Shape | **Star**, centred on the controller | **Ring** |
+| Carries | Launching the worker processes, once | Every tensor, every token |
+| Travels over | Wi-Fi / Tailscale / mDNS | Thunderbolt, and nothing else |
+| Set up by | `distribute_keys.zsh` | `mlx.distributed_config` |
+
+`mlx.launch` runs on the controller and SSHes into every host in
+`cluster.json` — each entry carries its own `ssh` address — to start the
+worker processes. Workers never SSH each other. Once those processes exist
+SSH is finished, and the ring carries the actual work.
+
+So **SSH does not follow the cables.** The controller needs key trust to
+every node including the one it shares no Thunderbolt link with, and that
+trust travels over the ordinary network. Cabling a ring says nothing about
+which machines need to be able to log into which.
+
 ## Thunderbolt networking
 
 Cable a **physical ring** and let MLX configure it:

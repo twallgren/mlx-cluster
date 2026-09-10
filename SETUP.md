@@ -51,7 +51,14 @@ Password authentication is fine here. Key trust is the next step.
 ```
 
 This sets up passwordless SSH from your machine to every node, **and from
-the controller to every node including itself**. That last part is easy to
+the controller to every node including itself**.
+
+Do not try to make this match the cabling. You are about to wire a
+Thunderbolt *ring*, but SSH trust is a *star* centred on the controller,
+travelling over ordinary Wi-Fi rather than over the Thunderbolt links. The
+two topologies are independent: the ring carries tensors during inference,
+SSH only starts the processes. The controller needs to reach every node,
+including the one it shares no cable with. That last part is easy to
 miss and not optional: `mlx.distributed_config` and `mlx.launch` treat the
 controller as just another host in the list and SSH into it like any other.
 
