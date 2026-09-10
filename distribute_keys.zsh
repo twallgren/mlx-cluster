@@ -40,11 +40,12 @@ Options:
   -u, --user NAME                     SSH username, same on all nodes (default: $USER)
   -k, --client-key PATH               Client's public key to install on all nodes (default:
                                       ~/.ssh/id_ed25519.pub). Generated with ssh-keygen if
-                                      missing. --controller HOST Which host is the MLX
-                                      controller (default: first in --hosts) --client-only
-                                      Only do phase A (client -> nodes) --controller-only
-                                      Only do phase B (controller -> workers) --dry-run
-                                      Print what would happen; make no changes.
+                                      missing.
+  --controller HOST                   Which host is the MLX controller (default: first in
+                                      --hosts)
+  --client-only                       Only do phase A (client -> nodes)
+  --controller-only                   Only do phase B (controller -> workers)
+  --dry-run                           Print what would happen; make no changes.
   -h, --help                          Show this help.
 EOF
 }

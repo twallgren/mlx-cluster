@@ -53,8 +53,8 @@ What it does per node:
   1. Resolves the destination path via the node's own Python
      (import <module>; print(<module>.__file__)) so it always matches
      that node's actual Python version and install layout.
-  2. Backs up the existing file to <dest>.bak.<timestamp> (unless
-     --no-backup).
+  2. Backs up the existing file to <dest>.bak.<timestamp>, unless you
+     pass --no-backup.
   3. Copies the local file over via scp.
   4. Re-imports the module on the node to confirm it's still valid
      Python and importable before moving on to the next node.
