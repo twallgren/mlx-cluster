@@ -226,9 +226,14 @@ debugging something that may already be fixed.
 |---|---|
 | [mlx-lm#1816](https://github.com/ml-explore/mlx-lm/pull/1816) — `PipelineMixin` dropping layers on uneven splits | Merged |
 | [mlx#4465](https://github.com/ml-explore/mlx/pull/4465) — uneven tensor-parallel sharding in distributed linear layers | Open |
-| [mlx-lm#1863](https://github.com/ml-explore/mlx-lm/pull/1863) — GQA/MLA-aware uneven sharding in `shard()` | Open |
+| [mlx-lm#1861](https://github.com/ml-explore/mlx-lm/pull/1861) — DeepSeek-V3.2 onto the shared `PipelineMixin` | Merged |
 | [mlx-lm#1862](https://github.com/ml-explore/mlx-lm/pull/1862) — `pipeline()` support for Qwen2 and Qwen3-Next | Open |
-| [mlx-lm#1861](https://github.com/ml-explore/mlx-lm/pull/1861) — `qwen3_moe.py` `sanitize()` gating | Open |
+| [mlx-lm#1863](https://github.com/ml-explore/mlx-lm/pull/1863) — GQA/MLA-aware uneven sharding in `shard()` | Draft, blocked on mlx#4465 |
+| [mlx-lm#1875](https://github.com/ml-explore/mlx-lm/pull/1875) — `qwen3_moe.py` `sanitize()` assuming layer 0 is a MoE layer | Draft |
+
+Only one non-draft pull request per author can be open at a time in
+`mlx-lm`, so the queue behind the current one sits as drafts rather than
+waiting for review. A draft here means "next in line", not "unfinished".
 
 If you do carry local patches, carry them as **commits on a fork** and
 install editable — `configure_node.zsh --mlx-lm-git URL#branch`. See the
