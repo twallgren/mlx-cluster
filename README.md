@@ -1,9 +1,14 @@
-# MLX cluster bring-up
+# mlx-cluster
 
 Scripts for building and operating a small distributed MLX inference
 cluster out of Apple silicon Macs — provisioning the nodes from a client
 machine, then downloading, distributing and switching the model that runs
 across them.
+
+The story behind them — what broke, three conclusions that turned out to
+be wrong, and the partition bug that silently dropped transformer layers
+for months — is written up in
+[Running a 235B model across three MacBooks](https://taylorwallgren.com/distributed-ai-cluster.html).
 
 Written for and tested on three 64GB M1 Max MacBook Pros wired into a
 Thunderbolt ring (192GB pooled), running models up to Qwen3-235B-A22B at
