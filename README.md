@@ -218,22 +218,34 @@ before committing to a large download.
 ## Upstream patches
 
 Getting every model in the registry running took changes to MLX itself.
-Most are now upstream, so a current `mlx`/`mlx-lm` needs fewer local
+Most are now merged upstream, so a current `mlx-lm` needs fewer local
 patches than this cluster originally carried — check before you go
 debugging something that may already be fixed.
+
+**Merged is not released.** The last tagged `mlx-lm` release is 0.31.3,
+from April 2026, and none of the merges below are in it. `pip install
+mlx-lm` gives you pipeline support for DeepSeek-V2 and GLM-4 MoE only;
+install from `main` (`configure_node.zsh --mlx-lm-git
+https://github.com/ml-explore/mlx-lm#main`) to get Qwen3-MoE, Qwen2 and
+Qwen3-Next as well.
 
 | Change | Status |
 |---|---|
 | [mlx-lm#1816](https://github.com/ml-explore/mlx-lm/pull/1816) — `PipelineMixin` dropping layers on uneven splits | Merged |
 | [mlx#4465](https://github.com/ml-explore/mlx/pull/4465) — uneven tensor-parallel sharding in distributed linear layers | Open |
 | [mlx-lm#1861](https://github.com/ml-explore/mlx-lm/pull/1861) — DeepSeek-V3.2 onto the shared `PipelineMixin` | Merged |
-| [mlx-lm#1862](https://github.com/ml-explore/mlx-lm/pull/1862) — `pipeline()` support for Qwen2 and Qwen3-Next | Open |
-| [mlx-lm#1863](https://github.com/ml-explore/mlx-lm/pull/1863) — GQA/MLA-aware uneven sharding in `shard()` | Draft, blocked on mlx#4465 |
-| [mlx-lm#1875](https://github.com/ml-explore/mlx-lm/pull/1875) — `qwen3_moe.py` `sanitize()` assuming layer 0 is a MoE layer | Draft |
+| [mlx-lm#1862](https://github.com/ml-explore/mlx-lm/pull/1862) — `pipeline()` support for Qwen2 and Qwen3-Next | Merged |
+| [mlx-lm#1863](https://github.com/ml-explore/mlx-lm/pull/1863) — GQA/MLA-aware uneven sharding in `shard()` | Open, blocked on mlx#4465 |
+| [mlx-lm#1875](https://github.com/ml-explore/mlx-lm/pull/1875) — `qwen3_moe.py` `sanitize()` assuming layer 0 is a MoE layer | Merged |
 
-Only one non-draft pull request per author can be open at a time in
-`mlx-lm`, so the queue behind the current one sits as drafts rather than
-waiting for review. A draft here means "next in line", not "unfinished".
+What remains open is the uneven tensor-parallel sharding pair, and the
+model-side half cannot merge before the core change does. If you need
+tensor mode on an architecture whose head counts do not divide by your
+node count, that is still a local patch.
+
+`mlx-lm` allows only one non-draft pull request per author at a time, so
+if you follow a split like this, expect the later pieces to wait as drafts
+— next in line, not unfinished.
 
 If you do carry local patches, carry them as **commits on a fork** and
 install editable — `configure_node.zsh --mlx-lm-git URL#branch`. See the
@@ -286,8 +298,8 @@ patched file has to be copied into each node's `site-packages`.
   MLP block costs more latency than it recovers by splitting the compute,
   while pipeline pays two hops per token regardless of depth. Treat tensor
   mode as the compatibility fallback for architectures with no
-  `.pipeline()` — Qwen2 being the one that matters here — not as the fast
-  option.
+  `.pipeline()` — on `mlx-lm` `main` that is now only Llama among the
+  models here — not as the fast option.
 - **Forcing an unsupported mode hangs rather than erroring.** A model whose
   architecture implements `shard()` but not `pipeline()` will accept
   `--mode pipeline` and then never respond: the model loads lazily on the
