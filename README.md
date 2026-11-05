@@ -75,6 +75,8 @@ reconfigure_thunderbolt_ring.zsh   (or reboot_cluster.zsh, which does both)
 | `switch_model.zsh` | client | Stops whatever is running and launches a different model in the right parallelism mode. `--list`, `--status`, `--stop`. |
 | `tb_link_addrs.zsh` | client | Derives the real direct Thunderbolt address between two nodes by matching subnets on both ends. Can drive an `rsync` over it. |
 | `reconfigure_thunderbolt_ring.zsh` | client | Re-discovers the post-reboot Thunderbolt interface mapping, applies it through the command-specific passwordless-sudo rules, and verifies MLX point-to-point ring traffic. |
+| `persist_thunderbolt_ring.zsh` | client | Stores the live ring addresses on each node and installs a LaunchDaemon (`ring_boot_apply.zsh`) that re-applies them at boot, so the ring survives a reboot without re-running the reconfigure script. Re-run with `--reconfigure` after moving cables. Needs an admin password per node. |
+| `ring_boot_apply.zsh` | node | Run by that LaunchDaemon as root: applies and keeps re-checking the `iface ip` pairs in `/usr/local/etc/mlx-ring.conf`. Not run by hand. |
 | `monitor_nodes.zsh` | client | Battery, CPU and thermal status across the cluster. |
 | `run_on_all.zsh` | client | Runs one command on every node in sequence and reports a per-node exit status. The workhorse behind most ad hoc chores. |
 | `reboot_cluster.zsh` | client | Reboots every node, waits for SSH, and re-establishes the Thunderbolt ring. The correct way to reboot the cluster, since a reboot invalidates the interface mapping. |
