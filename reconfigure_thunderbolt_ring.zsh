@@ -10,13 +10,13 @@
 #
 # Run from an admin/client machine that can SSH to the controller (normally
 # via its Tailscale name). The controller itself must be able to SSH to the
-# .local names in --hosts.
+# Tailscale names in --hosts (not .local: after a reboot mDNS can resolve a peer to a stale Thunderbolt IP).
 
 set -o pipefail
 emulate -L zsh
 
 CONTROLLER="ai-1"
-HOSTS="ai-1.local,ai-2.local,ai-3.local"
+HOSTS="ai-1,ai-2,ai-3"
 SSH_USER="$USER"
 VENV_PATH="~/mlx-env"
 HOSTFILE="cluster.json"
@@ -34,7 +34,7 @@ after a reboot, then verifies distributed point-to-point send/receive.
 Options:
   --controller HOST                   Controller reachable from this machine (default: ai-1)
   -H, --hosts LIST                    Comma-separated controller-visible hostnames (default:
-                                      ai-1.local,ai-2.local,ai-3.local)
+                                      ai-1,ai-2,ai-3; bare Tailscale names, not .local)
   -u, --user NAME                     SSH username on every node (default: $USER)
   --venv-path PATH                    MLX virtualenv path on every node (default: ~/mlx-env)
   --hostfile PATH                     Hostfile path relative to the controller's home unless

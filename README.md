@@ -155,7 +155,7 @@ which machines need to be able to log into which.
 Cable a **physical ring** and let MLX configure it:
 
 ```zsh
-mlx.distributed_config --hosts ai-1.local,ai-2.local,ai-3.local \
+mlx.distributed_config --hosts ai-1,ai-2,ai-3 \
   --over thunderbolt --auto-setup --backend ring \
   --output-hostfile cluster.json
 ```
