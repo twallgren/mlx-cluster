@@ -72,6 +72,16 @@ if (( ${#HOST_LIST} < 2 )) || [[ -z "$HOST_LIST[1]" ]]; then
 fi
 
 SSH_OPTS=(-o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new)
+
+# The ring daemon (persist_thunderbolt_ring.zsh) re-asserts its stored link
+# addresses every few seconds, which would undo a different plan from this
+# script while cluster.json follows the new one.
+if ssh ${SSH_OPTS} -o BatchMode=yes "$SSH_USER@$CONTROLLER" \
+    "launchctl print system/com.taylorwallgren.mlxring >/dev/null 2>&1"; then
+  print -u2 "WARN: the ring daemon is running on $CONTROLLER and will re-assert its stored addresses."
+  print -u2 "      Use persist_thunderbolt_ring.zsh --reconfigure instead, which stops it first."
+fi
+
 REMOTE_VENV="${VENV_PATH}/bin"
 CONFIG_CMD="cd ~ && yes '' | ${REMOTE_VENV}/mlx.distributed_config --hosts ${HOSTS} --over thunderbolt --auto-setup --backend ring --output-hostfile ${HOSTFILE} --verbose"
 
